@@ -7,12 +7,14 @@
 
 class Timer {
 private:
-    int workDuration;    // Duration of work session in seconds
-    int breakDuration;   // Duration of break session in seconds
-    int remainingTime;   // Remaining time in seconds
+    int workDuration;
+    int breakDuration;
+    int remainingTime;
     bool isActive;
     bool isPaused;
-    std::string currentSessionType; // "work" or "break"
+    std::string currentSessionType;
+    std::string timerName; // New attribute for naming the timer
+    int completedSessions;
     std::chrono::time_point<std::chrono::steady_clock> startTime;
 
 public:
@@ -22,6 +24,9 @@ public:
     void resume();
     void stop();
     void reset();
+    void setName(const std::string& name);
+    void incrementCompletedSessions();
+    int getCompletedSessions() const;
     crow::json::wvalue getStatus();
     int getElapsedTime();
     std::string getSessionType();

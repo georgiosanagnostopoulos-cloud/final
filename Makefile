@@ -1,22 +1,18 @@
 CXX = g++
-CXXFLAGS = -std=c++17 -Wall -Wextra -pedantic
-TARGET = PomodoroTimer
+CXXFLAGS = -std=c++17 -O2
+LDFLAGS = -lpthread
 
-SRCS = main.cpp timer.cpp session_log.cpp
-OBJS = $(SRCS:.cpp=.o)
+SOURCES = main.cpp timer.cpp session_log.cpp notification.cpp
+OBJECTS = $(SOURCES:.cpp=.o)
+EXECUTABLE = server
 
-INCLUDE_PATH = /path/to/crow/include
-LIBS = -pthread
+all: $(EXECUTABLE)
 
-all: $(TARGET)
-
-$(TARGET): $(OBJS)
-	$(CXX) $(CXXFLAGS) -I$(INCLUDE_PATH) -o $(TARGET) $(OBJS) $(LIBS)
+$(EXECUTABLE): $(OBJECTS)
+	$(CXX) $(OBJECTS) -o $(EXECUTABLE) $(LDFLAGS)
 
 %.o: %.cpp
-	$(CXX) $(CXXFLAGS) -I$(INCLUDE_PATH) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	rm -f *.o $(TARGET)
-
-.PHONY: all clean
+	rm -f $(OBJECTS) $(EXECUTABLE)
