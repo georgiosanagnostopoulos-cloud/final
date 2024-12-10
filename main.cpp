@@ -3,6 +3,7 @@
 #include "session_log.h"
 #include "notification.h"
 #include <ctime>
+#include <iostream>
 
 // Utility function to get the current timestamp
 std::string getCurrentTimestamp() {
@@ -20,9 +21,6 @@ int main() {
 
     Timer timer;
     SessionLog sessionLog;
-
-    // Add a sample notification for testing
-    notificationManager.addNotification("System", "Server started successfully");
 
     // POST: Start a new timer
     CROW_ROUTE(app, "/api/timers").methods(crow::HTTPMethod::POST)(
@@ -43,77 +41,32 @@ int main() {
             return crow::response(201, res);
         });
 
-    // PUT: Pause or Resume the timer
-    CROW_ROUTE(app, "/api/timers").methods(crow::HTTPMethod::PUT)(
-        [&timer](const crow::request& req) {
+    // POST: Add a notification from a JSON payload (Updated Path)
+    CROW_ROUTE(app, "/api/notification").methods(crow::HTTPMethod::POST)(
+        [](const crow::request& req) {
+            extern NotificationManager notificationManager;
+
             auto body = crow::json::load(req.body);
             if (!body) return crow::response(400, "Invalid JSON");
 
-            std::string action = body["action"].s();
-            if (action == "pause") {
-                timer.pause();
-                notificationManager.addNotification("Timer", "Timer paused successfully");
-                return crow::response(200, "Timer paused");
-            } else if (action == "resume") {
-                timer.resume();
-                notificationManager.addNotification("Timer", "Timer resumed successfully");
-                return crow::response(200, "Timer resumed");
-            } else {
-                return crow::response(400, "Invalid action");
-            }
-        });
+            std::string type = body["type"].s();
+            std::string message = body["message"].s();
 
-    // PUT: Stop the timer
-    CROW_ROUTE(app, "/api/timers/stop").methods(crow::HTTPMethod::PUT)(
-        [&timer, &sessionLog]() {
-            Session session;
-            session.sessionType = timer.getSessionType();
-            session.duration = timer.getElapsedTime();
-            session.startTime = "N/A";
-            session.endTime = getCurrentTimestamp();
+            // Add the notification
+            notificationManager.addNotification(type, message);
 
-            sessionLog.logSession(session);
-            timer.stop();
-            notificationManager.addNotification("Timer", "Timer stopped and session logged");
+            // Print the notification to the console
+            std::cout << "Notification Added: " << std::endl;
+            std::cout << "Type: " << type << std::endl;
+            std::cout << "Message: " << message << std::endl;
 
-            return crow::response(200, "Timer stopped and session logged");
-        });
-
-    // DELETE: Reset the timer
-    CROW_ROUTE(app, "/api/timers").methods(crow::HTTPMethod::DELETE)(
-        [&timer]() {
-            timer.reset();
-            notificationManager.addNotification("Timer", "Timer reset successfully");
-            return crow::response(200, "Timer reset");
-        });
-
-    // GET: Retrieve the timer status
-    CROW_ROUTE(app, "/api/timers").methods(crow::HTTPMethod::GET)(
-        [&timer]() {
-            return crow::response(timer.getStatus());
-        });
-
-    // GET: Retrieve session logs
-    CROW_ROUTE(app, "/api/sessions").methods(crow::HTTPMethod::GET)(
-        [&sessionLog]() {
-            auto logs = sessionLog.getLogs();
             crow::json::wvalue res;
-            auto& sessionsArray = res["sessions"];
-            sessionsArray = crow::json::wvalue::list();
-
-            for (const auto& session : logs) {
-                crow::json::wvalue s;
-                s["sessionType"] = session.sessionType;
-                s["duration"] = session.duration;
-                s["startTime"] = session.startTime;
-                s["endTime"] = session.endTime;
-                sessionsArray[sessionsArray.size()] = std::move(s);
-            }
-            return crow::response(200, res);
+            res["status"] = "Notification added successfully";
+            return crow::response(201, res);
         });
 
-    // GET: Retrieve notifications
-    CROW_ROUTE(app, "/api/notifications").methods(crow::HTTPMethod::GET)(
+    // GET: Retrieve notifications (Updated Path)
+    CROW_ROUTE(app, "/api/notification").methods(crow::HTTPMethod::GET)(
         []() {
             auto notifications = notificationManager.getNotifications();
             crow::json::wvalue res;
@@ -132,12 +85,12 @@ int main() {
             return crow::response(200, res);
         });
 
-    // PUT: Mark all notifications as read
-    CROW_ROUTE(app, "/api/notifications/markAsRead").methods(crow::HTTPMethod::PUT)(
+    // PUT: Mark all notifications as read (Updated Path)
+    CROW_ROUTE(app, "/api/notification/markAsRead").methods(crow::HTTPMethod::PUT)(
         []() {
             notificationManager.markAllAsRead();
             return crow::response(200, "All notifications marked as read");
         });
 
-    app.bindaddr("0.0.0.0").port(18080).multithreaded().run();
+    app.bindaddr("0.0.0.0").port(17080).multithreaded().run();
 }

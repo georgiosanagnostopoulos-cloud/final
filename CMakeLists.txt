@@ -1,18 +1,15 @@
-cmake_minimum_required(VERSION 3.10)
-project(PomodoroTimer)
+set(SOURCES main.cpp timer.cpp session_log.cpp notification.cpp)
+set(TEST_SOURCES test_timer.cpp test_session_log.cpp test_notification_manager.cpp test_notification.cpp)
 
-set(CMAKE_CXX_STANDARD 17)
+# Include GoogleTest
+find_package(GTest REQUIRED)
+include_directories(${GTest_INCLUDE_DIRS})
 
-# Add Crow library
-include_directories(/path/to/crow/include)
+# Add test sources
+add_executable(tests ${TEST_SOURCES})
 
-# Add source files
-add_executable(PomodoroTimer
-    main.cpp
-    timer.cpp
-    session_log.cpp
-    utils.cpp
-)
+# Link GoogleTest and pthread
+target_link_libraries(tests ${GTest_LIBRARIES} pthread)
 
-# Link libraries
-target_link_libraries(PomodoroTimer pthread)
+# Run tests
+add_test(NAME TimerProjectTests COMMAND tests)
