@@ -20,7 +20,6 @@ private:
 public:
     void logSession(const Session& session);
     std::vector<Session> getLogs();
-    int getTotalSessions(); // Add this declaration
 };
 
 #endif
