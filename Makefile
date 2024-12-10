@@ -2,7 +2,7 @@ CXX = g++
 CXXFLAGS = -std=c++17 -Wall -Wextra -pedantic
 TARGET = PomodoroTimer
 
-SRCS = main.cpp timer.cpp session_log.cpp
+SRCS = main.cpp timer.cpp session_log.cpp user_manager.cpp
 OBJS = $(SRCS:.cpp=.o)
 
 INCLUDE_PATH = /path/to/crow/include

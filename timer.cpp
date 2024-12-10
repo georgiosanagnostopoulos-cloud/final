@@ -1,17 +1,15 @@
 #include "timer.h"
 
-Timer::Timer()
-    : totalWorkDuration(0), totalBreakDuration(0), remainingTime(0),
-      isActive(false), isPaused(false), currentSessionType("work") {}
+Timer::Timer() : workDuration(0), breakDuration(0), remainingTime(0), isActive(false), isPaused(false), currentSessionType("work") {}
 
 void Timer::start(int workDuration, int breakDuration) {
-    totalWorkDuration = workDuration * 60;     // Convert minutes to seconds
-    totalBreakDuration = breakDuration * 60;   // Convert minutes to seconds
-    remainingTime = totalWorkDuration;
-    isActive = true;
-    isPaused = false;
-    currentSessionType = "work";
-    startTime = std::chrono::steady_clock::now();
+    this->workDuration = workDuration * 60;
+    this->breakDuration = breakDuration * 60;
+    this->remainingTime = this->workDuration;
+    this->isActive = true;
+    this->isPaused = false;
+    this->currentSessionType = "work";
+    this->startTime = std::chrono::steady_clock::now();
 }
 
 void Timer::pause() {
@@ -23,7 +21,7 @@ void Timer::pause() {
 }
 
 void Timer::resume() {
-    if (!isActive && isPaused) {
+    if (isPaused && !isActive) {
         isPaused = false;
         isActive = true;
         startTime = std::chrono::steady_clock::now();
@@ -31,16 +29,14 @@ void Timer::resume() {
 }
 
 void Timer::stop() {
-    if (isActive || isPaused) {
-        remainingTime = 0;
-        isActive = false;
-        isPaused = false;
-    }
+    isActive = false;
+    isPaused = false;
+    remainingTime = 0;
 }
 
 void Timer::reset() {
-    totalWorkDuration = 0;
-    totalBreakDuration = 0;
+    workDuration = 0;
+    breakDuration = 0;
     remainingTime = 0;
     isActive = false;
     isPaused = false;
@@ -58,12 +54,16 @@ crow::json::wvalue Timer::getStatus() {
     } else {
         int elapsedTime = getElapsedTime();
         int timeLeft = remainingTime - elapsedTime;
-        if (timeLeft <= 0) {
-            // Switch to break session
+
+        if (timeLeft <= 0 && currentSessionType == "work") {
             currentSessionType = "break";
-            remainingTime = totalBreakDuration;
+            remainingTime = breakDuration;
             startTime = std::chrono::steady_clock::now();
             timeLeft = remainingTime;
+        } else if (timeLeft <= 0 && currentSessionType == "break") {
+            stop();
+            res["status"] = "Completed";
+            return res;
         }
         res["status"] = currentSessionType;
         res["remainingTime"] = timeLeft;

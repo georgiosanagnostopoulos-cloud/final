@@ -6,8 +6,8 @@
 #include <mutex>
 
 struct Session {
-    std::string sessionType; // "work" or "break"
-    int duration;            // Duration in seconds
+    std::string sessionType;
+    int duration;
     std::string startTime;
     std::string endTime;
 };
@@ -20,6 +20,7 @@ private:
 public:
     void logSession(const Session& session);
     std::vector<Session> getLogs();
+    int getTotalSessions(); // Add this declaration
 };
 
 #endif
