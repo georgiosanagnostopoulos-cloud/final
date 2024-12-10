@@ -1,0 +1,93 @@
+{
+    "Timer Management": {
+        "Start a Timer": {
+            "Method": "POST",
+            "Endpoint": "/api/timers",
+            "Request Body": {
+                "workDuration": 25,
+                "breakDuration": 5
+            },
+            "Description": "Start a new Pomodoro session with specified durations."
+        },
+        "Get Timer Status": {
+            "Method": "GET",
+            "Endpoint": "/api/timers",
+            "Request Body": null,
+            "Description": "Retrieve the current Pomodoro session\u2019s status."
+        },
+        "Pause the Timer": {
+            "Method": "PUT",
+            "Endpoint": "/api/timers",
+            "Request Body": {
+                "action": "pause"
+            },
+            "Description": "Pause the active Pomodoro session."
+        },
+        "Resume the Timer": {
+            "Method": "PUT",
+            "Endpoint": "/api/timers",
+            "Request Body": {
+                "action": "resume"
+            },
+            "Description": "Resume the paused Pomodoro session."
+        },
+        "Stop the Timer": {
+            "Method": "PUT",
+            "Endpoint": "/api/timers/stop",
+            "Request Body": null,
+            "Description": "Stop the active Pomodoro session and save it to the session log."
+        },
+        "Reset the Timer": {
+            "Method": "DELETE",
+            "Endpoint": "/api/timers",
+            "Request Body": null,
+            "Description": "Reset the Pomodoro timer to its initial state."
+        }
+    },
+    "Session Tracking": {
+        "View Session Logs": {
+            "Method": "GET",
+            "Endpoint": "/api/sessions",
+            "Request Body": null,
+            "Description": "Retrieve the list of all completed Pomodoro sessions."
+        }
+    },
+    "Customization": {
+        "Set Custom Durations": {
+            "Method": "POST",
+            "Endpoint": "/api/timers",
+            "Request Body": {
+                "workDuration": 30,
+                "breakDuration": 10
+            },
+            "Description": "Set custom durations for work and break sessions."
+        }
+    },
+    "Error Handling": {
+        "Validation Error (Missing Fields)": {
+            "Method": "POST",
+            "Endpoint": "/api/timers",
+            "Request Body": {
+                "workDuration": 25
+            },
+            "Description": "Example of a validation error due to missing fields."
+        },
+        "Invalid Action in Timer Request": {
+            "Method": "PUT",
+            "Endpoint": "/api/timers",
+            "Request Body": {
+                "action": "invalid"
+            },
+            "Description": "Example of an invalid action resulting in an error."
+        },
+        "Invalid Timer Durations": {
+            "Method": "POST",
+            "Endpoint": "/api/timers",
+            "Request Body": {
+                "workDuration": -25,
+                "breakDuration": 5
+            },
+            "Description": "Example of invalid duration values."
+        }
+    }
+}
