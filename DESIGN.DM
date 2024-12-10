@@ -117,19 +117,7 @@ Time management is a crucial skill for productivity and focus, and the Pomodoro 
 
  UML Diagrams
 
-Below is the UML structure for your Pomodoro Timer API. It is simplified and represents the key components: `Timer`, `SessionLog`, and `User`.
 
-Timer
-- Attributes: `id`, `workDuration`, `breakDuration`, `status`
-- Operations: `start()`, `pause()`, `reset()`, `getStatus()`
-
-SessionLog
-- Attributes: `id`, `sessionType`, `duration`, `timestamp`
-- Operations: `logSession()`, `getSessionHistory()`
-
-User
-- Attributes: `id`, `username`, `password`, `email`
-- Operations: `authenticate()`, `createTimer()`, `viewSessionHistory()`
 
 +----------------------------------------------+
 |                    Timer                     |
