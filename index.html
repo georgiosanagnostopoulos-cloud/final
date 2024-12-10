@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pomodoro Timer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        #timer {
+            font-size: 48px;
+            margin: 20px;
+        }
+
+        #logs {
+            margin-top: 30px;
+        }
+
+        #logs ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #logs ul li {
+            background-color: #f2f2f2;
+            padding: 10px;
+            margin: 5px;
+            border: 1px solid #ccc;
+        }
+
+        #logs ul li:hover {
+            background-color: #e0e0e0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Pomodoro Timer</h1>
+    <div id="timer">00:00</div>
+    <button onclick="startTimer()">Start Timer</button>
+    <button onclick="stopTimer()">Stop Timer</button>
+    <button onclick="resetTimer()">Reset Timer</button>
+    <button onclick="saveSession()">Save Session</button>
+    <button onclick="fetchSessionLogs()">Display Session Logs</button>
+
+    <div id="logs">
+        <h2>Session Logs</h2>
+        <ul id="logList"></ul>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:18080';
+
+        async function startTimer() {
+            const response = await fetch(`${API_URL}/api/timers`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ workDuration: 25, breakDuration: 5 }),
+            });
+            console.log(await response.text());
+        }
+
+        async function stopTimer() {
+            const response = await fetch(`${API_URL}/api/timers`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'stop' }),
+            });
+            console.log(await response.text());
+        }
+
+        async function resetTimer() {
+            const response = await fetch(`${API_URL}/api/timers`, { method: 'DELETE' });
+            console.log(await response.text());
+        }
+
+        async function saveSession() {
+            const response = await fetch(`${API_URL}/api/sessions`, { method: 'POST' });
+            console.log(await response.text());
+        }
+
+        async function fetchSessionLogs() {
+            const response = await fetch(`${API_URL}/api/sessions`);
+            if (response.ok) {
+                const data = await response.json();
+                const logList = document.getElementById('logList');
+                logList.innerHTML = '';
+                data.logs.forEach((log, index) => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = `Session ${index + 1}: ${log}`;
+                    logList.appendChild(listItem);
+                });
+            }
+        }
+    </script>
+</body>
+</html>
