@@ -115,68 +115,90 @@ Time management is a crucial skill for productivity and focus, and the Pomodoro 
 
 ---
 
- UML Diagrams
++--------------------------------------------------------+
+|                        Timer                           |
++--------------------------------------------------------+
+| - id: int                                              |
+| - workDuration: int                                    |
+| - breakDuration: int                                   |
+| - remainingTime: int                                   |
+| - isActive: bool                                       |
+| - isPaused: bool                                       |
+| - startTime: time                                      |
+| - currentSessionType: string                          |
+| - timerName: string                                    |
+| - isRecurring: bool                                    |
+| - completedSessions: int                              |
++--------------------------------------------------------+
+| + start(int, int): void                                |
+| + pause(): void                                        |
+| + resume(): void                                       |
+| + stop(): void                                         |
+| + reset(): void                                        |
+| + getStatus(): crow::json::wvalue                     |
+| + getElapsedTime(): int                                |
+| + getSessionType(): string                             |
+| + setTimerName(string): void                           |
+| + enableRecurring(bool): void                         |
+| + getCompletedSessions(): int                         |
+| + incrementCompletedSessions(): void                  |
++--------------------------------------------------------+
 
+                          |
+                          V
++--------------------------------------------------------+
+|                     SessionLog                         |
++--------------------------------------------------------+
+| - logs: vector<Session>                                |
+| - logMutex: mutex                                      |
+| - totalWorkSessions: int                               |
+| - totalBreakSessions: int                              |
+| - longestSession: Session                              |
++--------------------------------------------------------+
+| + logSession(const Session&): void                    |
+| + getLogs(): vector<Session>                          |
+| + getTotalWorkSessions(): int                         |
+| + getTotalBreakSessions(): int                        |
+| + getLongestSession(): Session                        |
+| + clearLogs(): void                                    |
++--------------------------------------------------------+
 
-
-+----------------------------------------------+
-|                    Timer                     |
-+----------------------------------------------+
-| - workDuration: int                          |
-| - breakDuration: int                         |
-| - remainingTime: int                         |
-| - isActive: bool                             |
-| - isPaused: bool                             |
-| - currentSessionType: string                 |
-| - startTime: time                            |
-+----------------------------------------------+
-| + start(int, int): void                      |
-| + pause(): void                              |
-| + resume(): void                             |
-| + stop(): void                               |
-| + reset(): void                              |
-| + getStatus(): crow::json::wvalue            |
-| + getElapsedTime(): int                      |
-| + getSessionType(): string                   |
-+----------------------------------------------+
-                  |
-                  V
-+----------------------------------------------+
-|                 SessionLog                   |
-+----------------------------------------------+
-| - logs: vector<Session>                      |
-| - logMutex: mutex                            |
-+----------------------------------------------+
-| + logSession(const Session&): void           |
-| + getLogs(): vector<Session>                 |
-+----------------------------------------------+
-
-                  |
-                  V
-+----------------------------------------------+
-|             NotificationManager              |
-+----------------------------------------------+
-| - notifications: vector<Notification>        |
-| - nextId: int                                |
-+----------------------------------------------+
+                          |
+                          V
++--------------------------------------------------------+
+|                 NotificationManager                    |
++--------------------------------------------------------+
+| - notifications: vector<Notification>                 |
+| - nextId: int                                          |
+| - unreadCount: int                                     |
+| - notificationTypes: set<string>                      |
++--------------------------------------------------------+
 | + addNotification(const string&, const string&): void |
-| + getNotifications(): vector<Notification>   |
-| + markAllAsRead(): void                      |
-+----------------------------------------------+
-                  |
-                  V
-+----------------------------------------------+
-|                 Notification                 |
-+----------------------------------------------+
-| - id: int                                    |
-| - type: string                               |
-| - message: string                            |
-| - timestamp: string                          |
-| - isRead: bool                               |
-+----------------------------------------------+
-| + Notification(int, const string&, const string&) |
-| + markAsRead(): void                         |
-+----------------------------------------------+
+| + getNotifications(): vector<Notification>            |
+| + markAllAsRead(): void                                |
+| + getUnreadCount(): int                                |
+| + addNotificationType(string): void                   |
+| + getNotificationTypes(): set<string>                 |
+| + deleteNotification(int): bool                       |
++--------------------------------------------------------+
+
+                          |
+                          V
++--------------------------------------------------------+
+|                    Notification                        |
++--------------------------------------------------------+
+| - id: int                                              |
+| - type: string                                         |
+| - message: string                                      |
+| - timestamp: string                                    |
+| - isRead: bool                                         |
++--------------------------------------------------------+
+| + Notification(int, const string&, const string&)      |
+| + markAsRead(): void                                   |
+| + isUnread(): bool                                     |
+| + updateMessage(string): void                         |
++--------------------------------------------------------+
+
 
 
        
