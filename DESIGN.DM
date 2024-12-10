@@ -115,53 +115,94 @@ Time management is a crucial skill for productivity and focus, and the Pomodoro 
 
 ---
 
- UML Diagrams
++--------------------------------------------------------+
+|                        Timer                           |
++--------------------------------------------------------+
+| - id: int                                              |
+| - workDuration: int                                    |
+| - breakDuration: int                                   |
+| - remainingTime: int                                   |
+| - isActive: bool                                       |
+| - isPaused: bool                                       |
+| - startTime: time                                      |
+| - currentSessionType: string                          |
+| - timerName: string                                    |
+| - isRecurring: bool                                    |
+| - completedSessions: int                              |
++--------------------------------------------------------+
+| + start(int, int): void                                |
+| + pause(): void                                        |
+| + resume(): void                                       |
+| + stop(): void                                         |
+| + reset(): void                                        |
+| + getStatus(): crow::json::wvalue                     |
+| + getElapsedTime(): int                                |
+| + getSessionType(): string                             |
+| + setTimerName(string): void                           |
+| + enableRecurring(bool): void                         |
+| + getCompletedSessions(): int                         |
+| + incrementCompletedSessions(): void                  |
++--------------------------------------------------------+
 
-Below is the UML structure for your Pomodoro Timer API. It is simplified and represents the key components: `Timer`, `SessionLog`, and `User`.
+                          |
+                          V
++--------------------------------------------------------+
+|                     SessionLog                         |
++--------------------------------------------------------+
+| - logs: vector<Session>                                |
+| - logMutex: mutex                                      |
+| - totalWorkSessions: int                               |
+| - totalBreakSessions: int                              |
+| - longestSession: Session                              |
++--------------------------------------------------------+
+| + logSession(const Session&): void                    |
+| + getLogs(): vector<Session>                          |
+| + getTotalWorkSessions(): int                         |
+| + getTotalBreakSessions(): int                        |
+| + getLongestSession(): Session                        |
+| + clearLogs(): void                                    |
++--------------------------------------------------------+
 
-Timer
-- Attributes: `id`, `workDuration`, `breakDuration`, `status`
-- Operations: `start()`, `pause()`, `reset()`, `getStatus()`
+                          |
+                          V
++--------------------------------------------------------+
+|                 NotificationManager                    |
++--------------------------------------------------------+
+| - notifications: vector<Notification>                 |
+| - nextId: int                                          |
+| - unreadCount: int                                     |
+| - notificationTypes: set<string>                      |
++--------------------------------------------------------+
+| + addNotification(const string&, const string&): void |
+| + getNotifications(): vector<Notification>            |
+| + markAllAsRead(): void                                |
+| + getUnreadCount(): int                                |
+| + addNotificationType(string): void                   |
+| + getNotificationTypes(): set<string>                 |
+| + deleteNotification(int): bool                       |
++--------------------------------------------------------+
 
-SessionLog
-- Attributes: `id`, `sessionType`, `duration`, `timestamp`
-- Operations: `logSession()`, `getSessionHistory()`
+                          |
+                          V
++--------------------------------------------------------+
+|                    Notification                        |
++--------------------------------------------------------+
+| - id: int                                              |
+| - type: string                                         |
+| - message: string                                      |
+| - timestamp: string                                    |
+| - isRead: bool                                         |
++--------------------------------------------------------+
+| + Notification(int, const string&, const string&)      |
+| + markAsRead(): void                                   |
+| + isUnread(): bool                                     |
+| + updateMessage(string): void                         |
++--------------------------------------------------------+
 
-User
-- Attributes: `id`, `username`, `password`, `email`
-- Operations: `authenticate()`, `createTimer()`, `viewSessionHistory()`
 
-UML Diagram Sketch
-   +-------------------+        +-------------------+
-   |       Timer       |        |     SessionLog    |
-   +-------------------+        +-------------------+
-   | - id              |        | - id              |
-   | - workDuration    |        | - sessionType     |
-   | - breakDuration   |        | - duration        |
-   | - status          |        | - timestamp       |
-   +-------------------+        +-------------------+
-   | + start()         |        | + logSession()    |
-   | + pause()         |        | + getSessionHistory()|
-   | + reset()         |        +-------------------+
-   | + getStatus()     |
-   +-------------------+
 
-          |
-          |
-          V
-   +-------------------+
-   |       User        |
-   +-------------------+
-   | - id              |
-   | - username        |
-   | - password        |
-   | - email           |
-   +-------------------+
-   | + authenticate()  |
-   | + createTimer()   |
-   | + viewSessionHistory() |
-   +-------------------+
-```
+       
+
 
 This UML represents the main entities and their relationships. Each class has its attributes and operations, showing how they interact with each other.
 
