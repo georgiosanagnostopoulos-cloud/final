@@ -131,37 +131,68 @@ User
 - Attributes: `id`, `username`, `password`, `email`
 - Operations: `authenticate()`, `createTimer()`, `viewSessionHistory()`
 
-UML Diagram Sketch
-   +-------------------+        +-------------------+
-   |       Timer       |        |     SessionLog    |
-   +-------------------+        +-------------------+
-   | - id              |        | - id              |
-   | - workDuration    |        | - sessionType     |
-   | - breakDuration   |        | - duration        |
-   | - status          |        | - timestamp       |
-   +-------------------+        +-------------------+
-   | + start()         |        | + logSession()    |
-   | + pause()         |        | + getSessionHistory()|
-   | + reset()         |        +-------------------+
-   | + getStatus()     |
-   +-------------------+
++----------------------------------------------+
+|                    Timer                     |
++----------------------------------------------+
+| - workDuration: int                          |
+| - breakDuration: int                         |
+| - remainingTime: int                         |
+| - isActive: bool                             |
+| - isPaused: bool                             |
+| - currentSessionType: string                 |
+| - startTime: time                            |
++----------------------------------------------+
+| + start(int, int): void                      |
+| + pause(): void                              |
+| + resume(): void                             |
+| + stop(): void                               |
+| + reset(): void                              |
+| + getStatus(): crow::json::wvalue            |
+| + getElapsedTime(): int                      |
+| + getSessionType(): string                   |
++----------------------------------------------+
+                  |
+                  V
++----------------------------------------------+
+|                 SessionLog                   |
++----------------------------------------------+
+| - logs: vector<Session>                      |
+| - logMutex: mutex                            |
++----------------------------------------------+
+| + logSession(const Session&): void           |
+| + getLogs(): vector<Session>                 |
++----------------------------------------------+
 
-          |
-          |
-          V
-   +-------------------+
-   |       User        |
-   +-------------------+
-   | - id              |
-   | - username        |
-   | - password        |
-   | - email           |
-   +-------------------+
-   | + authenticate()  |
-   | + createTimer()   |
-   | + viewSessionHistory() |
-   +-------------------+
-```
+                  |
+                  V
++----------------------------------------------+
+|             NotificationManager              |
++----------------------------------------------+
+| - notifications: vector<Notification>        |
+| - nextId: int                                |
++----------------------------------------------+
+| + addNotification(const string&, const string&): void |
+| + getNotifications(): vector<Notification>   |
+| + markAllAsRead(): void                      |
++----------------------------------------------+
+                  |
+                  V
++----------------------------------------------+
+|                 Notification                 |
++----------------------------------------------+
+| - id: int                                    |
+| - type: string                               |
+| - message: string                            |
+| - timestamp: string                          |
+| - isRead: bool                               |
++----------------------------------------------+
+| + Notification(int, const string&, const string&) |
+| + markAsRead(): void                         |
++----------------------------------------------+
+
+
+       
+
 
 This UML represents the main entities and their relationships. Each class has its attributes and operations, showing how they interact with each other.
 
